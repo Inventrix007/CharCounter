@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
 		return 0;
 	}
 	if(strcmp(argv[1],"-v")== 0 || strcmp(argv[1], "--version")== 0){
-		printf("Program version is 1.0.0.0\n");
+		printf("Program version is 1.0.0.1\n");
 	}
 	if(strcmp(argv[1], "-f")== 0 || strcmp(argv[1], "--file")==0){
 		printf("The file name is %s\n", argv[2]);
