@@ -9,6 +9,7 @@ void print_help()
 	printf("Options:\n");
 	printf("	-h, --help : Show this help message\n");
 	printf("	-v, --version : Show program version\n");
+	printf("    -f, --file : Specify file name\n");
 }
 FILE* openFile(char* fileName);
 void charCount(char* fileName);
@@ -20,19 +21,22 @@ int main(int argc, char *argv[]){
 		print_help();
 		return 0;
 	}
-
-	if(strcmp(argv[1],"-h") == 0 || strcmp(argv[1],"--help") == 0){
-		print_help();
-		return 0;
+	for(int i = 1; i < argc; i++){
+		if(strcmp(argv[i],"-h") == 0 || strcmp(argv[i],"--help") == 0){
+			print_help();
+		}		
+	    else if(strcmp(argv[i],"-v")== 0 || strcmp(argv[i], "--version")== 0){
+			printf("Program version is 1.0.0.1\n");
+		}
+		else if(strcmp(argv[i], "-f")== 0 || strcmp(argv[i], "--file")==0){
+			i++;
+			printf("The file name is %s\n", argv[i]);
+			charCount(argv[i]);
+		}
+		else{
+			print_help();
+		}
 	}
-	if(strcmp(argv[1],"-v")== 0 || strcmp(argv[1], "--version")== 0){
-		printf("Program version is 1.0.0.1\n");
-	}
-	if(strcmp(argv[1], "-f")== 0 || strcmp(argv[1], "--file")==0){
-		printf("The file name is %s\n", argv[2]);
-		charCount(argv[2]);
-	}
-
 	
 	return 0;
 }
@@ -74,6 +78,7 @@ void charCount(char* fileName)
 	printf("File %s contains %d characters.\n",fileName, counter);
 	
 	fclose(file);
+	printf("file closed successfully\n");
 }
 
 
