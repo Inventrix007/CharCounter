@@ -1,0 +1,5 @@
+output file is : tests/output.txtInside CharCount Function testFile.txt
+Inside openFile function
+File testFile.txt contains 549 characters.
+file closed successfully
+hello from main.c

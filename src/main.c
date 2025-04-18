@@ -3,14 +3,25 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+struct flags{
+	int outputFlag;
+	int wordFlag;
+	char* outputFileName;
+	char* inputFile;
+	int charFlag;
+};
+FILE* output;
+
 void print_help()
 {
-	printf("Error Encountered!\n");
-	printf("Options:\n");
-	printf("	-h, --help : Show this help message\n");
-	printf("	-v, --version : Show program version\n");
-	printf("    -f, --file : Specify file name\n");
+	fprintf(output,"Error Encountered!\n");
+	fprintf(output,"Options:\n");
+	fprintf(output,"	-h, --help : Show this help message\n");
+	fprintf(output,"	-v, --version : Show program version\n");
+	fprintf(output,"    -f, --file : Specify file name\n");
+	fprintf(output,"    -o, --output : Specify the output file\n");
 }
+
 FILE* openFile(char* fileName);
 void charCount(char* fileName);
 
@@ -21,36 +32,54 @@ int main(int argc, char *argv[]){
 		print_help();
 		return 0;
 	}
+	struct flags flag;
+	output = stdout;
 	for(int i = 1; i < argc; i++){
 		if(strcmp(argv[i],"-h") == 0 || strcmp(argv[i],"--help") == 0){
 			print_help();
 		}		
 	    else if(strcmp(argv[i],"-v")== 0 || strcmp(argv[i], "--version")== 0){
-			printf("Program version is 1.0.0.1\n");
+			fprintf(output,"Program version is 1.0.0.1\n");
 		}
 		else if(strcmp(argv[i], "-f")== 0 || strcmp(argv[i], "--file")==0){
 			i++;
-			printf("The file name is %s\n", argv[i]);
-			charCount(argv[i]);
+			fprintf(output,"The file name is %s\n", argv[i]);
+			flag.charFlag =1;
+			flag.inputFile = argv[i];
+		}
+		else if(strcmp(argv[i], "-o")==0 || strcmp(argv[i], "--file")==0){
+			i++;
+			flag.outputFlag = 1;
+			flag.outputFileName = argv[i];
 		}
 		else{
 			print_help();
 		}
 	}
+
+	if(flag.outputFlag){
+		output = fopen(flag.outputFileName, "w");
+		fprintf(output,"output file is : %s", flag.outputFileName);
+	}
+	if(flag.charFlag){
+		charCount(flag.inputFile);
+	}
 	
+	fprintf(output, "hello from main.c");
+	fclose(output);
 	return 0;
 }
 
 FILE* openFile(char* fileName)
 {
-	printf("Inside openFile function\n");
+	fprintf(output,"Inside openFile function\n");
 	if(access(fileName, F_OK) != 0){
-		printf("file does not exist");
+		fprintf(output,"file does not exist");
 		return 0;
 	}
 	FILE *file = fopen(fileName, "r");
 	if(file == NULL){
-		printf("Error: could not open file%s\n",fileName);
+		fprintf(output,"Error: could not open file%s\n",fileName);
 	}
 	// Print file content to terminal
 	char ch;
@@ -65,7 +94,7 @@ FILE* openFile(char* fileName)
 
 void charCount(char* fileName)
 {
-	printf("Inside CharCount Function %s\n", fileName);
+	fprintf(output,"Inside CharCount Function %s\n", fileName);
 	FILE* file = openFile(fileName);
 
 	//count characters in file
@@ -75,10 +104,10 @@ void charCount(char* fileName)
 	{
 		counter++;
 	}
-	printf("File %s contains %d characters.\n",fileName, counter);
+	fprintf(output,"File %s contains %d characters.\n",fileName, counter);
 	
 	fclose(file);
-	printf("file closed successfully\n");
+	fprintf(output,"file closed successfully\n");
 }
 
 
