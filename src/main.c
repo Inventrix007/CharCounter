@@ -31,6 +31,7 @@ int hash(char* word){
 }
 
 void insert_word(char* word){
+	// printf("inside insert word function %s:\n", word);
 	int index = hash(word);
 	WordNode *node = hashTable[index];
 
@@ -42,11 +43,33 @@ void insert_word(char* word){
 		node = node->next;
 	}
 	//insert word
-	node = malloc(sizeof(WordNode)); 
-	node->count = 1;
-	node->word = word;
-	node->next = NULL;
-	hashTable[index]= node;
+	WordNode* newnode = malloc(sizeof(WordNode)); 
+	newnode->count = 1;
+	newnode->word = strdup(word);
+	newnode->next = NULL;
+	hashTable[index]= newnode;
+	// printf("hash value: %s : %d\n", hashTable[index]->word, index);
+}
+
+void printUniqueWord(){
+	int counter =0;
+	// char* str = malloc(sizeof(char)*1000);
+	fprintf(output,"The list of unique words is: \n");
+	for(int i = 0; i < Table_Size; i++){
+		if(hashTable[i] == NULL){
+			continue;
+		}	
+		WordNode *node = hashTable[i];
+		while(node!= NULL){
+			if(node->count == 1){
+				printf("%s\n", node->word);
+				// fprintf(output, "%s : %s\n",str, hashTable[i]->word);
+				counter++;
+			}
+			node = node->next;
+		}
+	}
+	fprintf(output,"The number of unique words is: %d\n",counter);
 }
 
 void print_help(int error)
@@ -65,7 +88,7 @@ FILE* openFile(char* fileName);
 int fileHandler(struct flags flag);
 
 int main(int argc, char *argv[]){
-	printf("Main Starts\n");
+	// printf("Main Starts\n");
 	printf("%s\n",argv[0]);
 	if(argc<2){
 		print_help(1);
@@ -112,13 +135,15 @@ int main(int argc, char *argv[]){
 }
 
 int fileHandler(struct flags flag){
-	fprintf(output,"Inside file handler Function %s\n", flag.inputFile);
+	// fprintf(output,"Inside file handler Function %s\n", flag.inputFile);
 	FILE* file = openFile(flag.inputFile);
 
 	//count characters in file
 	int counter = 0;
 	int wordCounter =0;
 	char ch;
+	char* str = malloc(sizeof(char)*100);
+	int i =0;
 	while( (ch = fgetc(file)) != EOF)
 	{
 		if(flag.charFlag){
@@ -127,16 +152,24 @@ int fileHandler(struct flags flag){
 		if(flag.wordFlag){
 			if(((unsigned char)ch == ' ') || ((unsigned char) ch == '\n')){
 				wordCounter++;
+				str[i]='\0';
+				i = 0;				
+				insert_word(str);
+				continue;
 			}
+			str[i] = ch;
+			i++;
 		}
-		if(counter < 8){
-			printf("ascii char of %c is %d and signed is %d\n", ch, (unsigned char) ch, ch);
-		}
+		// if(counter < 8){
+			// printf("ascii char of %c is %d and signed is %d\n", ch, (unsigned char) ch, ch);
+		// }
 		
 	}
 	fprintf(output,"File %s contains %d characters.\n",flag.inputFile, counter);
 	fprintf(output,"File %s contains %d words.\n",flag.inputFile, wordCounter);
 	fclose(file);
+	printUniqueWord();
+	free(str);
 }
 
 //void wordCount(char* fileName){
@@ -147,7 +180,7 @@ int fileHandler(struct flags flag){
 
 FILE* openFile(char* fileName)
 {
-	fprintf(output,"Inside openFile function\n");
+	// fprintf(output,"Inside openFile function\n");
 	if(access(fileName, F_OK) != 0){
 		fprintf(output,"file does not exist");
 		return 0;
@@ -157,6 +190,7 @@ FILE* openFile(char* fileName)
 		fprintf(output,"Error: could not open file%s\n",fileName);
 	}
 	// Print file content to terminal
+	fprintf(output, "The text in file %s:\n", fileName);
 	char ch;
 	while ((ch = fgetc(file)) !=EOF){
 		putchar(ch);
